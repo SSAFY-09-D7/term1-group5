@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 // 마법사 상어와 파이어스톰
 public class mon_baek_20058 {
     private static int[][] del = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    private static int[][] arr, tmp;
     private static class Node {
         int x;
         int y;
@@ -23,8 +24,7 @@ public class mon_baek_20058 {
         int n = Integer.parseInt(st.nextToken());
         int q = Integer.parseInt(st.nextToken());
         int len = (int) Math.pow(2, n);
-        int[][] arr = new int[len][len];
-        int[][] tmp;
+        arr = new int[len][len];
         for (int i = 0; i < len; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < len; j++) {
@@ -37,17 +37,19 @@ public class mon_baek_20058 {
         while (q-- > 0) {
             int a = Integer.parseInt(st.nextToken());
             int l = (int) Math.pow(2, a);
-            for (int i = 0; i < len; i += l) {
-                for (int j = 0; j < len; j += l) {
-                    rotate(i, j, l, arr);
-                }
-            }
 
             tmp = new int[len][len];
-            for (int i = 0; i < len; i++) tmp[i] = arr[i].clone();
+            for (int i = 0; i < len; i += l) {
+                for (int j = 0; j < len; j += l) {
+                    rotate(i, j, l);
+                }
+            }
+            arr = tmp;
 
+            tmp = new int[len][len];
             for (int i = 0; i < len; i++) {
                 for (int j = 0; j < len; j++) {
+                    tmp[i][j] = arr[i][j];
                     int near = 0;
                     for (int k = 0; k < 4; k++) {
                         int x = i + del[k][0];
@@ -97,33 +99,11 @@ public class mon_baek_20058 {
         return cnt;
     }
 
-    private static void rotate(int xstart, int ystart, int l, int[][] arr) {
-        int rotateCnt = l / 2;
-        while (rotateCnt-- > 0) {
-            int[] tmp = new int[l - 1];
-            for (int i = ystart + 1; i < ystart + l; i++) {
-                tmp[i - ystart - 1] = arr[xstart][i];
+    private static void rotate(int r, int c, int div) {
+        for (int i = 0; i < div; i++) {
+            for (int j = 0; j < div; j++) {
+                tmp[j + r][c + div - i - 1] = arr[i + r][j + c];
             }
-
-            for (int i = xstart, j = ystart + l - 1; j > ystart; i++, j--) {
-                arr[xstart][j] = arr[i][ystart];
-            }
-
-            for (int i = ystart, j = xstart; i < ystart + l - 1; i++, j++) {
-                arr[j][ystart] = arr[xstart + l - 1][i];
-            }
-
-            for (int i = xstart + l - 1, j = ystart; i > xstart; i--, j++) {
-                arr[xstart + l - 1][j] = arr[i][ystart + l - 1];
-            }
-
-            for (int i = 0, j = xstart + 1; i < l - 1; i++, j++) {
-                arr[j][ystart + l - 1] = tmp[i];
-            }
-
-            l -= 2;
-            xstart++;
-            ystart++;
         }
     }
 }
